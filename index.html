@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loom: Weaving Geometry-Consistent Human-Object Interactions</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video id="bg-video" autoplay muted loop playsinline>
+            <source src="figs/background.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Loom: Weaving Geometry-Consistent Human-Object Interactions through Progressive Curriculum Learning</h1>
+            <div class="teaser">
+            <img src="figs/teaser.png" alt="Loom Teaser">
+            </div>
+            <div class="abstract">
+                <p>Human-object interaction (HOI) video generation has garnered increasing attention due to its promising applications in digital humans, e-commerce, advertising, and robotics imitation learning. However, existing methods face two critical limitations: (1) a lack of effective mechanisms to inject multi-view information of the target object into the model, leading to poor cross-view consistency, and (2) heavy reliance on fine-grained hand mesh annotations for modeling interaction occlusions. To address these challenges, we introduce Loom, a Diffusion Transformer (DiT)-based framework that generates realistic HOI videos with geometrically consistent object illustration, using simplified human conditioning and 3D object inputs. We first propose an RCM-cache mechanism that leverages relative coordinate maps as a universal representation to precisely control 6-DoF object transformations. To overcome interaction dataset scarcity and leverage existing public datasets, we design a progressive training curriculum that enhances model capabilities and eliminates hand mesh requirements. Extensive experiments demonstrate that our method faithfully preserves human identity and the object's multi-view geometry, while maintaining smooth motion and outperforming prior approaches in object manipulation fidelity.</p>
+            </div>
+        </header>
+
+        <!-- Method Overview -->
+        <div class="section">
+            <h2>Method Overview</h2>
+            <div class="method-content">
+                <div class="method-item">
+                    <h3>RCM-Cache Mechanism</h3>
+                    <img src="figs/RCM_cache.png" alt="RCM-Cache Mechanism">
+                    <p>We introduce Relative Coordinate Maps (RCM) for object conditioning, inspired by 3D asset generation leveraging RCM to enforces correspondence between textured meshes and input images. RCM renders objects using local vertex coordinates, ensuring pixels from the same 3D vertex maintain consistent coloring across views. </p>
+                </div>
+                <div class="method-item">
+                    <h3>Model Training Pipeline</h3>
+                    <img src="figs/model_training.png" alt="Model Training Pipeline">
+                    <p>we plainly concat and inject all conditions through the input latent fusion, where we let the self-attention to learn the relation ship between those input conditions and the final output, as long as we have provided all required information. </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Data -->
+        <div class="section">
+            <h2>Training Data</h2>
+            <div class="method-content">
+                <div class="method-item">
+                    <h3>Data Composition of Curriculum Learning</h3>
+                    <img src="figs/training_data_composition.png" alt="Training Data Composition">
+                    <p>Through three-stage curriculum learning, the model progressively acquires animation capabilities. In Curriculum I, it learns human pose conditioning from animatable human datasets. Curriculum II introduces hand-object occlusion through interaction datasets while developing geometric consistency via object-oriented videos. Finally, Curriculum III achieves photorealistic human-object interaction using a carefully curated high-quality dataset.</p>
+                </div>
+                <div class="method-item">
+                    <h3>Mani4D Data Curation Process</h3>
+                    <img src="figs/data_curation.png" alt="Data Curation Process">
+                    <p> We integrate state-of-the-art models for robust multi-modal conditioning extraction:
+
+Human pose: Extract per-frame poses using DWPose, filtering low-confidence joints.
+Object mesh: For object-focused videos, use optimization methods (PGSR, 2DGS) or diffusion models (ReconViaGen). For occluded objects, apply Amodal3R with SAM2 segmentation.
+Object 6DoF pose: Extract metric depth using MoGe2 with camera intrinsics from EXIF tags, align across frames via RANSAC for consistency. Calibrate mesh-depth scale discrepancies, then feed RGB, depth, and textured mesh to FoundationPose for robust 6DoF estimation.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quantitative Results -->
+        <div class="section">
+            <h2>Quantitative Results</h2>
+            <div class="results-content">
+                <img src="figs/quantitive_scores_on_Mani4D-Test.png" alt="Quantitative Scores on Mani4D-Test" style="max-width: 70%; height: auto;">
+                <p>We qualitatively compared our method against prior work, demonstrating consistently superior results. MimicMotion fails to preserve reference object geometry, producing distorted shapes. AnchorCrafter severely overfits and doesn't generalize to unseen references. UniAnimate-DiT generates plausible videos but cannot faithfully render novel viewpoints due to inadequate multi-view information injection.</p>
+            </div>
+        </div>
+
+        <!-- Comparison: Mani4D -->
+        <div class="section video-section" data-order="1" data-section-type="comparison" id="section-mani4d">
+            <div class="section-header">
+                <h2>Comparison: Mani4D Testset</h2>
+                <button class="pause-all-btn" onclick="togglePauseAll('section-mani4d')">Pause All</button>
+            </div>
+            <div class="comparison-controls">
+                <label for="scene-select-mani4d">Select Scene:</label>
+                <select id="scene-select-mani4d" onchange="updateComparison('mani4d')">
+                    <option value="">-- Select a scene --</option>
+                </select>
+            </div>
+            <div class="comparison-grid" id="comparison-mani4d"></div>
+        </div>
+
+        <!-- Comparison: Ablation Study -->
+        <div class="section video-section" data-order="3" data-section-type="comparison" id="section-ablation">
+            <div class="section-header">
+                <h2>Comparison: Ablation Study </h2>
+                <h3>(P-PoseOnly, H-HandObject, O-ObjectOnly, F-Finetune)</h3>
+                <button class="pause-all-btn" onclick="togglePauseAll('section-ablation')">Pause All</button>
+            </div>
+            <div class="comparison-controls">
+                <label for="scene-select-ablation">Select Scene:</label>
+                <select id="scene-select-ablation" onchange="updateComparison('ablation')">
+                    <option value="">-- Select a scene --</option>
+                </select>
+            </div>
+            <div class="comparison-grid" id="comparison-ablation"></div>
+        </div>
+
+        <!-- Comparison: Novel Human -->
+        <div class="section video-section" data-order="2" data-section-type="comparison" id="section-novelhuman">
+            <div class="section-header">
+                <h2>Comparison: Novel Human</h2>
+                <button class="pause-all-btn" onclick="togglePauseAll('section-novelhuman')">Pause All</button>
+            </div>
+            <div class="comparison-controls">
+                <label for="scene-select-novelhuman">Select Scene:</label>
+                <select id="scene-select-novelhuman" onchange="updateComparison('novelhuman')">
+                    <option value="">-- Select a scene --</option>
+                </select>
+            </div>
+            <div class="comparison-grid" id="comparison-novelhuman"></div>
+        </div>
+
+        <!-- Demo Videos: Novel Object -->
+        <div class="section video-section" data-order="5" data-section-type="demo" id="section-demo-novel">
+            <div class="section-header">
+                <h2>Demo: Novel Object Manipulation</h2>
+                <button class="pause-all-btn" onclick="togglePauseAll('section-demo-novel')">Pause All</button>
+            </div>
+            <div class="gallery" id="demo-novel-object"></div>
+        </div>
+
+        <!-- Demo Videos: Retexture -->
+        <div class="section video-section" data-order="6" data-section-type="demo" id="section-demo-retexture">
+            <div class="section-header">
+                <h2>Demo: Retexture</h2>
+                <button class="pause-all-btn" onclick="togglePauseAll('section-demo-retexture')">Pause All</button>
+            </div>
+            <div class="gallery" id="demo-retexture"></div>
+        </div>
+
+        <!-- Demo Videos: NVS -->
+        <div class="section video-section" data-order="4" data-section-type="demo" id="section-demo-nvs">
+            <div class="section-header">
+                <h2>Demo: Novel View Synthesis</h2>
+                <button class="pause-all-btn" onclick="togglePauseAll('section-demo-nvs')">Pause All</button>
+            </div>
+            <div class="gallery" id="demo-nvs"></div>
+        </div>
+
+
+
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

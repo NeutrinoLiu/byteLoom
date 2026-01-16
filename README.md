@@ -2,6 +2,7 @@
 #### ByteLoom: Weaving Geometry-Consistent Human-Object Interactions through ProgressiveCurriculum Learning
 
 [![](https://img.shields.io/badge/Project-Page-green.svg)](https://neutrinoliu.github.io/byteloom/) [![](https://img.shields.io/badge/Paper-Arxiv-orange.svg)](https://arxiv.org/abs/2512.22854)
+[![](https://img.shields.io/badge/Paper-Dataset-yellow.svg)](https://huggingface.co/datasets/byteloom-HOI/Mani4D_test)
 
 https://github.com/user-attachments/assets/25e01349-d9d6-42bd-8584-18fa817f8a11
 
